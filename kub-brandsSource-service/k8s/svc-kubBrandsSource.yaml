@@ -7,7 +7,7 @@ metadata:
 spec:
   selector:
     app: kub-brandssource-service
-  type: ClusterIP
+  type: NodePort
   ports:
   - name: http
     port: 8070
