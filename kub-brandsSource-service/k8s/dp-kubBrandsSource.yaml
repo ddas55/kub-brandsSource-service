@@ -11,10 +11,10 @@ spec:
         app: kub-brandssource-service
     spec:
       strategy:
-      type: RolingUpdate
-      rollingUpdate:
-         maxUnavailable:0
-         maxSurge:1
+        type: RolingUpdate
+        rollingUpdate:
+           maxUnavailable:0
+           maxSurge:1
       containers:
       - name: kub-brandssource-service
         image: ddas55/kub-brandssource-service
