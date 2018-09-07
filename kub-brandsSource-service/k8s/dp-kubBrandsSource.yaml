@@ -4,11 +4,7 @@ kind: Deployment
 metadata:
   name: dp-kub-brandssource-service
 spec:
-  replicas: 1
-  selector:
-   matchLabels:
-    app: pod-kub-brandssource-service
-    env: dev
+  replicas: 2
   template:
     metadata:
       labels:
