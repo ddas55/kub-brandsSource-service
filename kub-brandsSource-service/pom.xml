@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.dd</groupId>
+	<artifactId>sb-mongo-brands</artifactId>
+	<version>1.0</version>
+	<packaging>jar</packaging>
+
+	<name>sb-mongo-brands</name>
+	<description>SpringBoot with docker</description>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.12.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>Camden.SR7</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<logback.version>1.1.6</logback.version>
+		<docker.image.name>sb-mongo-brands</docker.image.name>
+        <!--Directory that holds Docker file and static content necessary to build the Docker image.-->
+        <docker.image.src.root>src/main/resources/docker</docker.image.src.root>
+        <!--Directory to which the Docker image artifacts and the Docker
+            file will be copied to and which will serve as the root directory when building the Docker image. -->
+        <docker.build.directory>${project.build.directory}/dockerimgbuild</docker.build.directory>
+        <docker.host.url>http://localhost:2375</docker.host.url>
+        <docker.file.name>Dockerfile</docker.file.name>
+        <docker.hub.userid>ddas55</docker.hub.userid>
+        <docker.hub.password>Gunti@16Oct2005</docker.hub.password>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+  			<groupId>net.logstash.logback</groupId>
+  			<artifactId>logstash-logback-encoder</artifactId>
+  			<version>4.6</version>
+		</dependency>
+		
+		<!--START MongoDB Related jar -->  
+	  	<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+    	<!--END MongoDB Related jar --> 
+    	
+    	<!--START Prometheus Related jar -->  
+    	<dependency>  
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_spring_boot</artifactId>
+            <version>0.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_hotspot</artifactId>
+            <version>0.3.0</version>
+        </dependency>
+        
+        <dependency>
+		    <groupId>io.prometheus</groupId>
+    		<artifactId>simpleclient_servlet</artifactId>
+    		<version>0.3.0</version>
+		</dependency>
+        <!--END Prometheus Related jar -->  
+        
+	
+	      <dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-devtools</artifactId>
+				<scope>runtime</scope>
+		 </dependency>
+		 
+		<dependency>
+		   <groupId>org.springframework.cloud</groupId>
+		   <artifactId>spring-cloud-starter-sleuth</artifactId>
+		</dependency>
+		
+		 <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zipkin</artifactId>
+        </dependency>
+        
+		<!-- 
+		<dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-security</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.security.oauth</groupId>
+		  <artifactId>spring-security-oauth2</artifactId>
+		</dependency>
+		 -->
+		 
+
+		
+		<!-- 
+		<dependency>
+		    <groupId>net.logstash.logback</groupId>
+		    <artifactId>logstash-logback-encoder</artifactId>
+		    <version>5.0</version>
+		</dependency>
+		
+		
+		<dependency>
+		    <groupId>io.fabric8</groupId>
+		    <artifactId>spring-cloud-kubernetes-core</artifactId>
+		    <version>0.1.6</version>
+		</dependency>
+		
+		 <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+         -->
+          
+	</dependencies>
+
+	<build>
+		<plugins>
+		     <plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-surefire-plugin</artifactId>
+			    <configuration>
+			        <skipTests>true</skipTests>
+			    </configuration>
+			</plugin>
+                     
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		    <!-- Copy the directory containing static content to build directory.-->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${docker.build.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${docker.image.src.root}</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--Copy the JAR file containing the Spring Boot application to the application/lib directory.-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <!--
+                                        Specify groupId, artifactId, version and type for the
+                                        artifact you want to package in the Docker image.
+                                        In the case of a Spring Boot application, these are
+                                        the same as the project group id, artifact id
+                                        and version.
+                                    -->
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${docker.build.directory}/application/lib</outputDirectory>
+                                    <!--
+                                        Specify the destination name as to have one and the same name
+                                        to refer to in the Dockerfile.
+                                    -->
+                                    <destFileName>springboot-webapp.jar</destFileName>
+                                </artifactItem>
+                                <!-- Add additional artifacts to be packaged in the Docker image here. -->
+
+                            </artifactItems>
+                            <outputDirectory>${docker.build.directory}</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+             <!--Build the Docker image. -->
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.25.2</version>
+                <configuration>
+                    <dockerHost>${docker.host.url}</dockerHost>
+                    <registry>registry.hub.docker.com/${docker.hub.userid}</registry>
+                    <images>
+                        <image>
+                            <name>${docker.image.name}</name>
+                            <build>
+                                <tags>
+                                    <tag>${project.version}</tag>
+                                    <tag>latest</tag>
+                                </tags>
+                                <dockerFile>${docker.build.directory}/${docker.file.name}</dockerFile>
+                            </build>
+                        </image>
+                    </images>
+					<authConfig>
+					 <username>${docker.hub.userid}</username>
+					 <password>${docker.hub.password}</password>
+					</authConfig>
+                </configuration>
+                <executions>
+	                <execution>
+					 <id>push</id>
+					 <phase>post-integration-test</phase>
+					 <goals>
+					 <goal>stop</goal>
+					 <goal>push</goal>
+					 </goals>
+					 </execution>
+                </executions>
+            </plugin>
+            
+       
+
+		</plugins>
+	</build>
+    
+
+</project>
