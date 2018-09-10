@@ -82,11 +82,11 @@ public class BrandController {
     @RequestMapping(path="/allbrands",method = RequestMethod.GET)
     public ResponseEntity<?> allbrands() {
     	hit++;
-       	System.out.println("## BrandController.Hit:" + hit);
-       	System.out.println("@@ BrandController.random:" + random);
+       	System.out.println("$$$$$$ S.O.P BrandController.Hit:" + hit);
+       	System.out.println("$$$$$$ S.O.P BrandController.random:" + random);
     	
-       	logger.info("## BrandController.Hit:" + hit);
-    	logger.info("@@ BrandController.random:" + random);
+       	logger.info("## logger BrandController.Hit:" + hit);
+    	logger.info("@@ logger BrandController.random:" + random);
     	List<Brand> brands = new ArrayList<>();
     	try {
     		Brand bmw = new Brand();
@@ -96,6 +96,7 @@ public class BrandController {
     		brands.add(bmw);
     		brands.add(lr);
 			//brands = dao.getVehBrands();
+    		logger.info("@@ logger BrandController.brands:" + brands);
 			return new ResponseEntity<List<Brand>>(brands,HttpStatus.OK);
 	
 		} catch (RuntimeException e) {
